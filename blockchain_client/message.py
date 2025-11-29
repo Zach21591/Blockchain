@@ -43,9 +43,9 @@ class Transaction:
         # tries the signing the 
         try:
             # converts the key to binary
-            private_key_obj = RSA.importKey(binascii.unhexlify(self.sender_private_key))
+            priv_to_bin = RSA.importKey(binascii.unhexlify(self.sender_private_key))
             # creates a signer object which uses the binary private key
-            signer = PKCS1_v1_5.new(private_key_obj)
+            signer = PKCS1_v1_5.new(priv_to_bin)
             
             # puts together the information into a single string to sign
             payload = (str(self.sender_address) + str(self.recipient_address) + str(self.asset_hash) + str(self.asset_details) + str(self.product_type) + str(self.timestamp)).encode('utf8')
@@ -56,7 +56,7 @@ class Transaction:
             return binascii.hexlify(signer.sign(h)).decode('ascii')
         # exception occurs if an error occurs in the signing
         except Exception as e:
-            logging.error(f"Signing failed: {e}")
+            logging.error(f"failed signing: {e}")
             return None
 
 # --- Routes ---
@@ -119,7 +119,7 @@ def generate_transaction():
             # if statment to see if the block for asset_details is the same
             if block['asset_details'] == asset_details:
                 # logs a warning of duplication
-                logging.warning(f"Duplicate attempt rejected: {asset_details}")
+                logging.warning(f"failed duplication attempt: {asset_details}")
                 # returns an error stating there was a duplication
                 return jsonify({'error': 'Product with the same name already exists!'}), 400
 
@@ -145,7 +145,7 @@ def generate_transaction():
         }
         
         # logs the registered asset
-        logging.info(f"Asset Registered: {asset_details}")
+        logging.info(f"Asset has been registered: {asset_details}")
         # returns the response
         return jsonify(response), 200
         

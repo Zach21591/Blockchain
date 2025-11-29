@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--title of the html page-->
+    <title>Blockchain Wallet</title>
+    <!--styles used to properly format the page-->
+    <style>
+        body{font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto;} 
+        textarea{width: 100%; height: 100px; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px;}
+        button {padding: 15px 30px; background-color: limegreen; color: white; border: none; font-size: 16px; border-radius: 5px; cursor: pointer;}
+        button:hover {background-color: green;}
+        h1 {text-align: center; color: black;}
+    </style>
+
+<!--<link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/vendor/DataTables/css/datatables.min.css">
+<link rel="stylesheet" href="/static/vendor/font-awwsome/font-awesome.min.css">
+<link rel="stylesheet" href="/static/css/custom.css">-->
+
+</head>
+<body>
+    <!--<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a href="/" class="navbar-brand">Digital Asset Client</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a href="/" class="nav-link">Wallet Generator <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/make/transaction" class="nav-link">Make Transaction</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/view/transaction" class="nav-link">View Transaction</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>-->
+
+    <!--page heading-->
+    <h1>🔑Client Wallet Generator🔑</h1>
+    <!--styles and formats the heading the proper part of the page-->
+    <div style="text-align: center; margin-bottom: 30px;">
+        <!--button that generates the public/private keys-->
+        <button onclick="generateWallet()">Generate New Wallet</button>
+    </div>
+    
+    <!--sub-heading indicating the public key generation-->
+    <h3>Public Key</h3>
+    <!--readonly part that has the public key-->
+    <textarea id="public_key" readonly></textarea>
+    
+    <!--sub-heading indicating the private key generation-->
+    <h3>Private Key</h3>
+    <!--meassage in red making sure this is not shared with others-->
+    <p style="color: red; font-weight: bold;">DO NOT SHARE! Must have it for transaction purposes.</p>
+    <!--readonly part that has the private key-->
+    <textarea id="private_key" readonly></textarea>
+
+    <!--<script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/static/vendor/DataTables/js/datatables.min.js"></script>
+    <script src="/static/vendor/DataTables/js/ellipsis.js"></script>-->
+
+    <script>
+        // function to allow the button to actually generate the keys
+        async function generateWallet() {
+            // attempts to generate the keys
+            try {
+                // variable that gets key information from /wallet/new
+                const response = await fetch('/wallet/new');
+                // variable that gets the response and changes it to JSON readable
+                const data = await response.json();
+                document.getElementById('public_key').value = data.public_key;
+                document.getElementById('private_key').value = data.private_key;
+            // catches to see if an error occurs
+            } catch (error) {
+                // alerts user that an error occured when conencting to the server
+                alert("Error connecting to server.");
+            }
+        }
+    </script>
+</body>
+</html>
