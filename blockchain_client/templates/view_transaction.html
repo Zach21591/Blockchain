@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--title of the html page-->
+    <title>Blockchain Ledger</title>
+    <!--styles used to properly format the page-->
+    <style>
+        nav.site-nav{position: fixed; top: 0; left: 0; right: 0; width: 100%; background: blue; z-index: 1000; padding: 14px 25px; box-sizing: border-box; display: flex; align-items: center; font-family: sans-serif; color: white; box-shadow: o 2px 6px rgba(0,0,0,0.15);}
+        nav.site-nav .brand{font-weight: bold; font-size: 18px;}
+        nav.site-nav .nav-links{margin-left: auto; display: flex; gap: 28px;}
+        nav.site-nav a{color: white; text-decoration: none; font-size: 16px;}
+        nav.site-nav a:hover{font-weight: bolder;}
+        body{font-family: sans-serif; padding: 20px; padding-top: 60px;}
+        table {width: 100%; border-collapse: collapse; margin-top: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+        th, td {border: 1px solid #ddd; padding: 12px; text-align: left;}
+        th {background-color: #007bff; color: white;}
+        tr:nth-child(even){background-color: #f2f2f2;}
+        tr:hover {background-color: #ddd;}
+        h1 {color: #333;}
+    </style>
+</head>
+<body>
+    <!--navbar for the page-->
+    <nav class="site-nav">
+        <a href="/" class="brand">Digital Asset Client</a>
+
+        <div class="nav-links">
+            <a href="/">Wallet Generator</a>
+            <a href="/make/transaction" style="color: white; text-decoration: none;">Register Asset</a>
+            <a href="/view/transactions" style="color: white; text-decoration: none;">View Assets</a>
+        </div>
+    </nav>
+    <!--page heading-->
+    <h1>Registered Assets</h1>
+    <!--sub-heading for the page-->
+    <p>Displays record on blockchain node.</p>
+    <!--creates the table for the stored information-->
+    <table>
+        <!--stores the information below-->
+        <tr>
+            <!--stores when registry occured (only displays the head name)-->
+            <th>Time Stamped</th>
+            <!--stores the product type (only displays the head name)-->
+            <th>Type</th>
+            <!--stores the name of the digital asset (only displays the head name)-->
+            <th>Asset Information</th>
+            <!--stores owners public key (only displays the head name)-->
+            <th>Owner (Public Key)</th>
+            <!--stores the hased file (only displays the head name)-->
+            <th>File Hash</th>
+        </tr>
+        <!--actually stores the information users put in-->
+        {% for tx in transactions %}
+        <tr>
+            <!--stores the time-->
+            <td>{{ tx.timestamp }}</td>
+            <!--stores the type of product-->
+            <td>{{ tx.product_type }}</td>
+            <!--stores the asset details-->
+            <td><strong>{{ tx.asset_details }}</strong></td>
+            <!--stores the public key of the owner-->
+            <td style="font-size: 10px; font-family: monospace;" title="{{ tx.sender_address }}">{{ tx.sender_address[:20] }}...</td>
+            <!--stores the hashed asset value-->
+            <td style="font-size: 10px; font-family: monospace;">{{ tx.asset_hash }}</td>
+        </tr>
+        <!--ends the storing of information-->
+        {% endfor %}
+    </table>
+    
+    <!--only shows if no registries have been made-->
+    {% if not transactions %}
+    <!--tells user no assets have been registered-->
+    <p style="color: red; font-weight: bold;">No assets registered.</p>
+    <!--ends the storing of information-->
+    {% endif %}
+</body>
+</html>
