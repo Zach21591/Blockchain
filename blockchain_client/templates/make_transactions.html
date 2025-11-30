@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!--title of the html page-->
     <title>Make Transaction</title>
+    <!--styles used to properly format the page-->
     <style>
-        body{font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto;} 
+        nav.site-nav{position: fixed; top: 0; left: 0; right: 0; width: 100%; background: blue; z-index: 1000; padding: 14px 25px; box-sizing: border-box; display: flex; align-items: center; font-family: sans-serif; color: white; box-shadow: o 2px 6px rgba(0,0,0,0.15);}
+        nav.site-nav .brand{font-weight: bold; font-size: 18px;}
+        nav.site-nav .nav-links{margin-left: auto; display: flex; gap: 28px;}
+        nav.site-nav a{color: white; text-decoration: none; font-size: 16px;}
+        nav.site-nav a:hover{font-weight: bolder;}
+        body{font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; padding-top: 90px;} 
         input, textarea, select {display:block; width: 100%; margin-bottom: 10px; padding: 5px;}
         label {font-weight: bold;}
         .result-box {background: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 20px; display: none; border: 1px solid #ccc;}
@@ -13,64 +20,116 @@
     </style>
 </head>
 <body>
+    <!--navbar for the page-->
+    <nav class="site-nav">
+        <a href="/" class="brand">Digital Asset Client</a>
+
+        <div class="nav-links">
+            <a href="/">Wallet Generator</a>
+            <a href="/make/transaction" style="color: white; text-decoration: none;">Register Asset</a>
+            <a href="/view/transactions" style="color: white; text-decoration: none;">View Assets</a>
+        </div>
+    </nav>
+
+    <!--page heading-->
     <h1>Register New IP Asset</h1>
+    <!--creates the form for users to input the correct information-->
     <form id="txForm">
+        <!--label for the private key variable-->
         <label>Sender Private Key:</label>
-        <input type="text" name="sender_private_key" placeholder="Paste your private key here" required>
+        <!--requires users to place the private key-->
+        <input type="text" name="sender_private_key" placeholder="Sender private key goes here" required>
         
+        <!--label for the public key variable-->
         <label>Sender Public Key (Address):</label>
-        <input type="text" name="sender_address" placeholder="Paste your public key here" required>
+        <!--requires users to place the public key-->
+        <input type="text" name="sender_address" placeholder="Sender private key goes here" required>
         
-        <label>Recipient Address:</label>
+        <!--label for the public key variable (same variable, new public key for recipient)-->
+        <label>Recipient Public Key (Address):</label>
+        <!--requires users to place the public key-->
         <input type="text" name="recipient_address" value="0000-Registry-Admin-Address" required>
         
-        <label>Product Type:</label>
+        <!--label for the product type variable-->
+        <label>Type of Product:</label>
+        <!--uses the variable as a select option to selection specific product options-->
         <select name="product_type">
-            <option value="Music">🎵 Music / Audio</option>
-            <option value="Art">🎨 Digital Art / NFT</option>
-            <option value="Patent">📜 Patent / Blueprint</option>
-            <option value="Code">💻 Software Code</option>
-            <option value="Literature">📖 Book / Article</option>
+            <!--option for music-->
+            <option value="Music">🎵Music/Audio🎵</option>
+            <!--option for art-->
+            <option value="Art">🎨Digital Art/NFT🎨</option>
+            <!--option for patent-->
+            <option value="Patent">📜Patent/Blueprint📜</option>
+            <!--option for code-->
+            <option value="Code">💻Software Code💻</option>
+            <!--option for literature-->
+            <option value="Literature">📖Book/Article📖</option>
         </select>
         
-        <label>Asset Hash (SHA256):</label>
+        <!--label for the asset hash variable-->
+        <label>Asset Hash</label>
+        <!--requires users to place the asset hash-->
         <input type="text" name="asset_hash" placeholder="e.g. 5e884898da28047151d0e56f8dc62927..." required>
         
+        <!--label for the asset details variable-->
         <label>Asset Details (Name/Title):</label>
+        <!--requires users to place the asset details-->
         <input type="text" name="asset_details" placeholder="e.g. 'Summer Vibes - Original Mix'" required>
         
+        <!--button that allows users to sign and register the product-->
         <button type="button" onclick="sendTx()">Sign & Register</button>
     </form>
 
+    <!--tells the user that their registration was successful after registered-->
     <div id="resultArea" class="result-box">
-        <h3>✅ Registration Successful!</h3>
+        <!--tells user registration was successful-->
+        <h3>Registration Successful!</h3>
+        <!--tells user the time they registered-->
         <p><strong>Registered On:</strong> <span id="display_time"></span></p>
+        <!--shows the user the signature-->
         <p><strong>Digital Signature:</strong></p>
+        <!--makes sure that the digital signature is a readonly text-->
         <textarea id="signature" readonly style="height: 80px;"></textarea>
     </div>
 
     <script>
+        // function to send the information from the form
         async function sendTx() {
-            const formData = new FormData(document.getElementById('txForm'));
+            // variable that holds all the information stored on the form
+            const form_info = new FormData(document.getElementById('txForm'));
             
+            // attempts the get the infromation from /generate/transaction
             try {
+                // waits for the response from the page
                 const response = await fetch('/generate/transaction', {
+                    // uses the POST method
                     method: 'POST',
-                    body: formData
+                    // gets the information from the form
+                    body: form_info
                 });
                 
+                // variables that converts the response to json
                 const data = await response.json();
                 
+                // if statement if the request was successful
                 if(response.ok) {
+                    // returns the registration box
                     document.getElementById('resultArea').style.display = 'block';
+                    // returns the signature and makes it a legit signature
                     document.getElementById('signature').value = data.signature;
+                    // returns the time the registery occured
                     document.getElementById('display_time').innerText = data.transaction.timestamp;
-                    alert("Asset Registered Successfully!");
+                    // alerts the user that the asset was registered successfully
+                    alert("Digital Asset Successfully Registered");
+                // else statement for an error
                 } else {
+                    // notifies user of the error
                     alert("Error: " + (data.error || "Unknown Error"));
                 }
+            // checks if there was a connection issue
             } catch (error) {
-                alert("Server Connection Failed. Is app.py running?");
+                // alerts the user of the connection issue
+                alert("Failed Connection");
             }
         }
     </script>
